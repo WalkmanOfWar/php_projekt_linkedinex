@@ -6,7 +6,10 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #38444d;
+    background-color: #04AA6D;
+    background-size: 50px 100px;
+    display: inline-block;
+    float: right;
   }
   
   li {
@@ -50,4 +53,18 @@ body {
   
   .dropdown:hover .dropdown-content {
     display: block;
+  }
+
+  .navigation-bar{
+    border: #ccc;
+    border-style: solid;
+  
+    background-color: white;
+    height: 50px;
+    width: 100%;
+  }
+  .img-logo{
+    display: inline-block;
+    width: 400px;
+    height: 50px;
   }
