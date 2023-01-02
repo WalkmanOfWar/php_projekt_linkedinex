@@ -1,6 +1,6 @@
 <?php
     session_start();
-    if((isset($_SESSION['Logged']))&&($_SESSION['Logged']==true)){
+    if((isset($_SESSION['Logged']))&& $_SESSION['Logged']){
         header('Location: index.php');
         exit();
     }
@@ -24,7 +24,7 @@
         </div>
 
         <div class="container">
-            <label for="uname"><b>Username</b></label>
+            <label for="uname"><b>Email</b></label>
             <input type="text" placeholder="Enter Email" name="login" required/>
 
 
@@ -45,18 +45,16 @@
             ?>
         </div>
 
-        <div class="container" style="background-color: #f1f1f1">
-            <a href="register.php" class="button--color-red">Register now</a>
+        <div class="container">
             <span class="psw">Forgot <a href="#">password?</a></span>
+        </div>
+
+        <div class="container">
+            <a href="register.php" class="button--color-red">Register now</a>
         </div>
     </form>
 </div>
 
 
 </body>
-
-<footer>
-    <p>Author: Maciej Sierzputowski</p>
-    <p><a href="mailto:235967@edu.p.lodz.pl">235967@edu.p.lodz.pl</a></p>
-</footer>
 </html>

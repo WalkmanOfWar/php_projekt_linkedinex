@@ -65,6 +65,10 @@ function email_check($email, bool $flag): bool
     return $flag;
 }
 
+//todo: ostylować to
+//todo: zabezpieczenie przed javascriptem i innymi rzeczami
+//todo: crossscripting trim, ograniczona ilosc formularzy
+
 if (isset($_POST['email'])) {
     $flag = true;
 
@@ -216,7 +220,7 @@ if (isset($_POST['email'])) {
             <option value="Man">Man</option>
             <option value="Other">Other</option>
         </select>
-        <label class="span.password" for="birthday"><b>Birthday:</b></label>
+        <label for="birthday"><b>Birthday:</b></label>
         <br/>
         <input type="date" id="birthday" name="birthday"/>
         <hr/>

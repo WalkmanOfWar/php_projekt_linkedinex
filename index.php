@@ -20,25 +20,71 @@
 </html>
 
 <body>
-  <div class="navigation-bar">
-      <img class="img-logo" src="images/logo-no-background.png" /><img />
-      <ul>
-        <li class="dropdown">
-          <a href="javascript:void(0)" class="dropbtn">Settings</a>
-          <div class="dropdown-content">
-            <a href="logout.php">Logout</a>
-            <a href="#">Link 2</a>
-            <a href="#">Link 3</a>
-          </div>
-        </li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="profile.php">Profile</a></li>
-        <li><a href="index.php">Home</a></li>
+<!--navbar-->
+  <navbar>
+      <ul class="nav-list">
+          <li class="nav-item">
+              <a href="#"><img class="logo" src="images/logo-no-background.png"></a>
+          </li>
+          <li class="nav-item">
+              <a href="#">Search</a>
+          </li>
+          <li class="nav-item">
+              <a href="#">Profile</a>
+          </li>
+          <li class="nav-item">
+              <a href="logout.php">Logout</a>
+          </li>
       </ul>
+  </navbar>
+<!--  searchbox -->
+  <div class="container">
+      <div class="row">
+          <div class="search-left">
+              <input class="button--search" type="text" placeholder="Enter keyword">
+              <button class="button--search">Search</button>
+          </div>
+      </div>
   </div>
-  <?php
-    echo "<p>Witaj".$_SESSION['Name']."!";
-  ?>
+<!--  jobs-->
+    <div class="container-xxl">
+        <div class="container">
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane">
+                    <div class="job-item">
+                        <div class="row" >
+                            <div class="job-left">
+                                <img src="images/com-logo-1.jpg" alt="" style="width: 80px; height: 80px;">
+                                <div class="text-start">
+                                    <h5>Java Developer</h5>
+                                    <span class="text-truncate">
+                                        <i class="fa fa-map-marker-alt text-primary me-2"></i>
+                                        "New York,Usa"
+                                    </span>
+                                    <span class="text-truncate">
+                                        <i class="fa fa-map-marker-alt text-primary me-2"></i>
+                                        "New York,Usa"
+                                    </span>
+                                    <span class="text-truncate">
+                                        <i class="fa fa-map-marker-alt text-primary me-2"></i>
+                                        "New York,Usa"
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="job-right">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!--  --><?php
+//    echo "<p>Witaj".$_SESSION['Name']."!";
+//  ?>
 </body>
 
 <footer>

@@ -1,17 +1,31 @@
 /* Bordered form */
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Bahnschrift, serif;
+}
+body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
 form {
     border: 3px solid #f1f1f1;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
-  
+
   .logincontainer{
-    padding-top: 10%;
-    padding-left: 15%;
-    padding-right: 15%;
-    padding-bottom: 10%;
+    padding: 10% 15%;
   }
-  
+
   /* Full-width inputs */
-  input[type=text], input[type=password] {
+  input[type=text], input[type=password], select, input[type=date] {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -19,7 +33,7 @@ form {
     border: 1px solid #ccc;
     box-sizing: border-box;
   }
-  
+
   /* Set a style for all buttons */
   button {
     background-color: #04AA6D;
@@ -30,7 +44,7 @@ form {
     cursor: pointer;
     width: 100%;
   }
-  
+
   /* Add a hover effect for buttons */
   button:hover {
     opacity: 0.8;
@@ -40,7 +54,7 @@ form {
     text-decoration: none;
     background-size: 50%;
     color: white;
-    padding: 14px 20px;    
+    padding: 14px 20px;
     border: none;
     cursor: pointer;
     width: 50%;
@@ -50,26 +64,26 @@ form {
     opacity: 0.8;
     color: white;
   }
-  
-  
+
+
   /* Center the avatar image inside this container */
   .imgcontainer {
     padding-top: 25px;
     text-align: center;
     display: block;
   }
-  
+
   /* Avatar image */
   img.avatar {
     width: 40%;
     border-radius: 50%;
   }
-  
+
   /* Add padding to containers */
   .container {
     padding: 16px;
   }
-  
+
   /* The "Forgot password" text */
   span.password {
     float: right;
@@ -93,4 +107,3 @@ form {
     color: red;
     margin-bottom: 10px;
   }
-  
