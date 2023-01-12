@@ -60,7 +60,7 @@ if (!isset($_SESSION['Logged'])) {
                         <div class="account-settings">
                             <div class="user-profile">
                                 <div class="user-avatar">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Maxwell Admin">
+                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="">
                                 </div>
                                 <h5 class="user-name">Maciej Sierzpytowski</h5>
                                 <h6 class="user-email">235967@edu.p.lodz.pl</h6>
@@ -83,13 +83,25 @@ if (!isset($_SESSION['Logged'])) {
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <h6>Maciej</h6>
+                                    <input type="text" class="form-control" id="name" placeholder="Enter name">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="surname">Surname</label>
-                                    <h6>Sierzputowski</h6>
+                                    <label for="website">Surname</label>
+                                    <input type="url" class="form-control" id="website" placeholder="Enter surname">
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="eMail">Email</label>
+                                    <input type="email" class="form-control" id="eMail" placeholder="Enter email address">
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="information">Informations about you</label>
+                                    <input type="text" class="form-control" id="information" placeholder="Tell something about you">
                                 </div>
                             </div>
 
@@ -101,34 +113,35 @@ if (!isset($_SESSION['Logged'])) {
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="Street">Street</label>
-                                    <h6>Pogodna 5</h6>
+                                    <input type="text" class="form-control" id="Street" placeholder="Enter Street">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="ciTy">City</label>
-                                    <h6>Łomża</h6>
+                                    <input type="text" class="form-control" id="ciTy" placeholder="Enter City">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="sTate">State/Voivodeship</label>
-                                    <h6>Podlaskie</h6>
+                                    <input type="text" class="form-control" id="sTate" placeholder="Enter State">
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="zIp">Zip Code</label>
-                                    <h6>18-400</h6>
+                                    <input type="text" class="form-control" id="zIp" placeholder="Zip Code">
                                 </div>
                             </div>
                         </div>
                         <div class="row gutters">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-<!--                                <div class="text-right">-->
-<!--                                    <button type="button" id="submit" name="submit" class="btn ">Cancel</button>-->
-<!--                                    <button type="button" id="submit" name="submit" class="btn button-update">Update</button>-->
-<!--                                </div>-->
+                                <div class="text-right">
+                                    <a href="profile_page.php" class="btn btn-danger">Cancel</a>
+<!--                                    <button type="button" id="submit" name="submit" class="btn" href="profile_page">Cancel</button>-->
+                                    <button type="button" id="submit" name="submit" class="btn button-update">Update</button>
+                                </div>
                             </div>
                         </div>
                     </div>

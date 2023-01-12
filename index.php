@@ -10,10 +10,10 @@ if (!isset($_SESSION['Logged'])) {
 <html lang="en_US">
 <head>
     <title>Page Title</title>
-    <link rel="stylesheet" href="main_page.css"/>
-    <link rel="stylesheet" href="bootsstrapstylesheet"/>
+
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="main_page.css"/>
 
     <meta charset="UTF-8"/>
     <meta name="author" content="235967"/>
@@ -32,21 +32,19 @@ if (!isset($_SESSION['Logged'])) {
 
 
 </head>
-<body></body>
-</html>
 
 <body>
 <!--navbar-->
 <navbar>
     <ul class="nav-list">
         <li class="nav-item">
-            <a href="#"><img class="logo" src="images/logo-no-background.png"></a>
+            <a href="#"><img class="logo" src="images/logo-no-background.png" alt=""></a>
         </li>
         <li class="nav-item">
             <a href="#">Search</a>
         </li>
         <li class="nav-item">
-            <a href="#">Profile</a>
+            <a href="profile_page_update.php">Profile</a>
         </li>
         <li class="nav-item">
             <a href="logout.php">Logout</a>
@@ -57,7 +55,7 @@ if (!isset($_SESSION['Logged'])) {
 <div class="container-12">
     <div class="row__search">
         <div class="search-left">
-            <input class="button--search" type="text" placeholder="Enter keyword">
+            <input class="button--search input-mainpage" type="text" placeholder="Enter keyword">
             <button class="button--search">Search</button>
         </div>
     </div>
@@ -252,7 +250,6 @@ if (!isset($_SESSION['Logged'])) {
             </div>
         </div>
     </div>
-</div>
 
 <!-- Jobs End -->
 
@@ -262,3 +259,4 @@ if (!isset($_SESSION['Logged'])) {
 //  ?>
 </body>
 
+</html>

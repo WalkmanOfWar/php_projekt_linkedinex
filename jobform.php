@@ -141,88 +141,77 @@ if (isset($_POST['email'])) {
 <body>
 <form method="post">
     <div class="container">
-        <h1>Register</h1>
-        <p>Please fill in this form to take your career to the next level.</p>
+        <h1>Job offer form</h1>
+        <p>Please fill in this to create job offer</p>
         <hr/>
 
-        <label for="name"><b>Name</b></label>
+
+        <label for="position"><b>Position</b></label>
         <input
                 type="text"
-                placeholder="Enter Name"
-                name="name"
-                id="name"
+                placeholder="Enter position"
+                name="position"
+                id="position"
                 required
         />
-        <?php
-        if (isset($_SESSION['e_name'])) {
-            echo '<div class="error">' . $_SESSION['e_name'] . '</div>';
-            unset($_SESSION['e_name']);
-        }
-        ?>
-
-        <label for="surname"><b>Surname</b></label>
-        <input
-                type="text"
-                placeholder="Enter Surname"
-                name="surname"
-                id="surname"
-                required
-        />
-        <?php
-        if (isset($_SESSION['e_surname'])) {
-            echo '<div class="error">' . $_SESSION['e_surname'] . '</div>';
-            unset($_SESSION['e_surname']);
-        }
-        ?>
-
-        <label for="\nemail"><b>Email</b></label>
-        <input
-                type="text"
-                placeholder="Enter Email"
-                name="email"
-                id="email"
-                required
-        />
-        <?php
-        if (isset($_SESSION['e_email'])) {
-            echo '<div class="error">' . $_SESSION['e_email'] . '</div>';
-            unset($_SESSION['e_email']);
-        }
-        ?>
-
-        <label for="password"><b>Password</b></label>
-        <input
-                type="password"
-                placeholder="Enter Password"
-                name="password"
-                id="password"
-                required
-        />
-        <?php
-        if (isset($_SESSION['e_password'])) {
-            echo '<div class="error">' . $_SESSION['e_password'] . '</div>';
-            unset($_SESSION['e_password']);
-        }
-        ?>
-
-        <label for="password-repeat"><b>Repeat Password</b></label>
-        <input
-                type="password"
-                placeholder="Repeat Password"
-                name="password-repeat"
-                id="password-repeat"
-                required
-        />
-        <label for="gender"><b>Choose gender:</b></label>
-        <select name="gender" id="sex">
-            <option value="Woman">Woman</option>
-            <option value="Man">Man</option>
-            <option value="Other">Other</option>
+        <label for="earnings"><b>Choose earnings: </b></label>
+        <select name="earnings" id="earnings">
+            <option value="low">3400 - 6000</option>
+            <option value="medium">6000 - 12500</option>
+            <option value="high">12500 - 20000</option>
+            <option value="very-high">20000+</option>
         </select>
-        <label for="birthday"><b>Birthday:</b></label>
-        <br/>
-        <input type="date" id="birthday" name="birthday"/>
+
+        <label for="benefits"><b>Benefits</b></label>
+        <input
+                type="text"
+                placeholder="Enter benefits"
+                name="benefits"
+                id="benefits"
+        />
+
+        <label for="working-time"><b>Choose working time: </b></label>
+        <select name="working-time" id="working-time">
+            <option value="full-time">Full-time</option>
+            <option value="part-time">Part-time</option>
+        </select>
+
+        <label for="type-of-contract"><b>Choose type of contract: </b></label>
+        <select name="type-of-contract" id="type-of-contract">
+            <option value="contract-of-employment">Contract of employment</option>
+            <option value="contract-work">Contract work</option>
+            <option value="mandate-contract">Mandate contract</option>
+            <option value="b2b-contract">B2B contract</option>
+            <option value="internship/practice">Internship/Practice</option>
+        </select>
+
+
+        <p>Office address</p>
         <hr/>
+
+        <label for="working-time"><b>Choose working time: </b></label>
+        <select name="working-time" id="working-time">
+            <option value="full-time">Full-time</option>
+            <option value="part-time">Part-time</option>
+        </select>
+
+        <label for="working-time"><b>Choose working time: </b></label>
+        <select name="working-time" id="working-time">
+            <option value="full-time">Full-time</option>
+            <option value="part-time">Part-time</option>
+        </select>
+
+        <label for="working-time"><b>Choose working time: </b></label>
+        <select name="working-time" id="working-time">
+            <option value="full-time">Full-time</option>
+            <option value="part-time">Part-time</option>
+        </select>
+
+        <label for="working-time"><b>Choose working time: </b></label>
+        <select name="working-time" id="working-time">
+            <option value="full-time">Full-time</option>
+            <option value="part-time">Part-time</option>
+        </select>
 
         <button type="submit" class="registerbtn">Register</button>
     </div>
