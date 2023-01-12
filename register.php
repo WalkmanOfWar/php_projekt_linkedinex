@@ -65,7 +65,6 @@ function email_check($email, bool $flag): bool
     return $flag;
 }
 
-//todo: ostylować to
 //todo: zabezpieczenie przed javascriptem i innymi rzeczami
 //todo: crossscripting trim, ograniczona ilosc formularzy
 
@@ -111,7 +110,9 @@ if (isset($_POST['email'])) {
             }
 
             if ($flag) {
-                if ($connection->query("INSERT INTO profil VALUES (NULL, '$name', '$surname', DEFAULT, DEFAULT, DEFAULT, '$password_hash', '$email',DEFAULT,'$birthday_date','$sex')")) {
+                if ($connection->query(
+                        "INSERT INTO profil VALUES (NULL, '$name', '$surname', DEFAULT, DEFAULT, DEFAULT, '$password_hash', '$email',DEFAULT,'$birthday_date','$sex')")
+                ) {
                     header('Location: login_page.php');
                 } else {
                     throw new Exception($connection->error);

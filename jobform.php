@@ -189,36 +189,39 @@ if (isset($_POST['email'])) {
         <p>Office address</p>
         <hr/>
 
-        <label for="working-time"><b>Choose working time: </b></label>
-        <select name="working-time" id="working-time">
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-        </select>
 
-        <label for="working-time"><b>Choose working time: </b></label>
-        <select name="working-time" id="working-time">
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-        </select>
+        <label for="street"><b>Street</b></label>
+        <input
+                type="text"
+                placeholder="Enter street name"
+                name="street"
+                id="street"
+        />
+        <label for="city"><b>City</b></label>
+        <input
+                type="text"
+                placeholder="Enter city name"
+                name="city"
+                id="city"
+        />
+        <label for="voivodeship"><b>State/Voivodeship</b></label>
+        <input
+                type="text"
+                placeholder="Enter state or voivodeship"
+                name="voivodeship"
+                id="voivodeship"
+        />
+        <label for="ZIPCode"><b>ZIP Code</b></label>
+        <input
+                type="text"
+                placeholder="Enter ZIP Code"
+                name="ZIPCode"
+                id="ZIPCode"
+        />
 
-        <label for="working-time"><b>Choose working time: </b></label>
-        <select name="working-time" id="working-time">
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-        </select>
-
-        <label for="working-time"><b>Choose working time: </b></label>
-        <select name="working-time" id="working-time">
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-        </select>
-
-        <button type="submit" class="registerbtn">Register</button>
+        <button type="submit" class="registerbtn">Submit</button>
     </div>
 
-    <div class="container signin">
-        <p>Already have an account? <a href="login_page.php">Sign in</a>.</p>
-    </div>
 </form>
 </body>
 </html>
