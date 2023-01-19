@@ -23,9 +23,9 @@ try {
             if ($user_number>0){
                 $row =  $result->fetch_assoc();
                 if (password_verify($password,$row['Password'])){
-                    $_SESSION['Name'] = $row['Name'];
+                    $_SESSION['email'] = $row['EmailAddress'];
                     $_SESSION['Logged'] = true;
-                    $_SESSION['Id'] = $row['Login'];
+                    $_SESSION['Id'] = $row['ProfilID'];
                     $result->free_result();
                     unset($_SESSION['Error']);
                     header('Location: index.php');
@@ -65,7 +65,8 @@ if ($connection->connect_errno!=0){
             if (password_verify($password,$row['Password'])){
                 $_SESSION['Name'] = $row['Name'];
                 $_SESSION['Logged'] = true;
-                $_SESSION['Id'] = $row['Login'];
+                $_SESSION['email'] = $row['EmailAddress'];
+                $_SESSION['Id'] = $row['ProfilID'];
                 $result->free_result();
                 unset($_SESSION['Error']);
                 header('Location: index.php');

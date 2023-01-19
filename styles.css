@@ -13,11 +13,14 @@ body{
 }
 
 form {
-    border: 3px solid #f1f1f1;
+    border: 3px solid #cccccc;
     max-width: 600px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
 
   .logincontainer{
@@ -39,7 +42,7 @@ form {
     background-color: #04AA6D;
     color: white;
     padding: 14px 20px;
-    margin: 8px 0;
+    margin: 12px 0;
     border: none;
     cursor: pointer;
     width: 100%;
@@ -106,4 +109,7 @@ form {
   .error{
     color: red;
     margin-bottom: 10px;
+  }
+  .text{
+    width: 50px;
   }

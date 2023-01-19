@@ -1,7 +1,7 @@
 <?php
 session_start();
 //TODO: dokleić tego ifa tam gdzie użytkownik musi być zalogowany
-if (!isset($_SESSION['Logged'])) {
+if (!isset($_SESSION['Logged']) || !isset($_SESSION['email'])) {
     header('Location: login_page.php');
     exit();
 }
@@ -50,6 +50,57 @@ if (!isset($_SESSION['Logged'])) {
         </li>
     </ul>
 </navbar>
+<?php
+include 'connect.php';
+
+$email = "235967@edu.p.lodz.pl";
+
+$employerIDquery = "SELECT * FROM profil where EmailAddress =?";
+$stmt = $conn->prepare($employerIDquery);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+
+$name = $row['Name'];
+$surname = $row['Surname'];
+$info = $row['InformationsAboutYou'];
+$adressID = $row['AddressID'];
+$sex = $row['Sex'];
+
+/**
+ * @param $sex
+ * @return string
+ */
+function selectPicture($sex): string
+{
+    if ($sex == "Man") {
+        $src = "https://bootdey.com/img/Content/avatar/avatar7.png";
+    } else if ($sex == "Woman") {
+        $src = "https://bootdey.com/img/Content/avatar/avatar8.png";
+    } else {
+        $src = "https://bootdey.com/img/Content/avatar/avatar2.png";
+    }
+    return $src;
+}
+
+$src = selectPicture($sex);
+
+
+$find_location_query = "SELECT * FROM location WHERE `LocationID` LIKE ?";
+$stmt = $conn->prepare($find_location_query);
+$stmt->bind_param("s", $adressID);
+$stmt->execute();
+$result_of_finding_location = $stmt->get_result();
+$row = $result_of_finding_location->fetch_assoc();
+
+$_SESSION['adressID'] = $adressID;
+$street = $row['Street'];
+$voivodeship = $row['Voivodeship'];
+$city = $row['City'];
+$zip =$row['ZIPCode'];
+$country = $row['Country'];
+echo '
 
 <div class="profile-body">
     <div class="container">
@@ -60,14 +111,14 @@ if (!isset($_SESSION['Logged'])) {
                         <div class="account-settings">
                             <div class="user-profile">
                                 <div class="user-avatar">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Maxwell Admin">
+                                    <img src='.$src.'>
                                 </div>
-                                <h5 class="user-name">Maciej Sierzpytowski</h5>
-                                <h6 class="user-email">235967@edu.p.lodz.pl</h6>
+                                <h5 class="user-name">'.$name.' '.$surname.'</h5>
+                                <h6 class="user-email">'.$email.'</h6>
                             </div>
                             <div class="about">
                                 <h5>Informations about me</h5>
-                                <p>I'm Maciek, student of Politechnika Łódzka</p>
+                                <p>'.$info.'</p>
                             </div>
                         </div>
                     </div>
@@ -83,13 +134,13 @@ if (!isset($_SESSION['Logged'])) {
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="name">Name</label>
-                                    <h6>Maciej</h6>
+                                    <h6>'.$name.'</h6>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="surname">Surname</label>
-                                    <h6>Sierzputowski</h6>
+                                    <h6>'.$surname.'</h6>
                                 </div>
                             </div>
 
@@ -101,34 +152,35 @@ if (!isset($_SESSION['Logged'])) {
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="Street">Street</label>
-                                    <h6>Pogodna 5</h6>
+                                    <h6>'.$street.'</h6>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="ciTy">City</label>
-                                    <h6>Łomża</h6>
+                                    <h6>'.$city.'</h6>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="sTate">State/Voivodeship</label>
-                                    <h6>Podlaskie</h6>
+                                    <h6>'.$voivodeship.'</h6>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
                                     <label for="zIp">Zip Code</label>
-                                    <h6>18-400</h6>
+                                    <h6>'.$zip.'</h6>
                                 </div>
                             </div>
                         </div>
                         <div class="row gutters">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-<!--                                <div class="text-right">-->
-<!--                                    <button type="button" id="submit" name="submit" class="btn ">Cancel</button>-->
-<!--                                    <button type="button" id="submit" name="submit" class="btn button-update">Update</button>-->
-<!--                                </div>-->
+                                <div class="text-right">
+                                    <button type="button" id="submit" name="submit" class="btn button-update">
+                                        <a href="profile_page_update.php">Edit your settings</a>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -136,8 +188,9 @@ if (!isset($_SESSION['Logged'])) {
             </div>
         </div>
     </div>
-</div>
+</div>'
 
+?>
 
 </body>
 

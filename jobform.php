@@ -1,5 +1,7 @@
 <?php
 session_start();
+include 'connect.php';
+
 /**
  * @param $password1
  * @param bool $flag
@@ -65,62 +67,106 @@ function email_check($email, bool $flag): bool
     return $flag;
 }
 
-//todo: ostylować to
-//todo: zabezpieczenie przed javascriptem i innymi rzeczami
-//todo: crossscripting trim, ograniczona ilosc formularzy
+    $email = '';
+//    $flag = email_check($email, $flag);
 
-if (isset($_POST['email'])) {
+    $position = '';
+    $earnings = '';
+    $benefits = '';
+    $working_time = '';
+    $type_of_contract = '';
+    $requirements = '';
+
+    $country = '';
+    $street = '';
+    $city = '';
+    $voivodeship = '';
+    $zip = '';
+
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $flag = true;
 
-    $name = $_POST['name'];
-    $surname = $_POST['surname'];
-    $birthday_date = $_POST['birthday'];
-    $sex = $_POST['gender'];
+    $email = $_POST['contact'];
+//    $flag = email_check($email, $flag);
 
-    $flag = name_surname_check($name, $flag, $surname);
+    $position = $_POST['position'];
+    $earnings = $_POST['earnings'];
+    $benefits = $_POST['benefits'];
+    $working_time = $_POST['working-time'];
+    $type_of_contract = $_POST['type-of-contract'];
+    $requirements = $_POST['requirements'];
+
+    $country = $_POST['country'];
+    $street = $_POST['street'];
+    $city = $_POST['city'];
+    $voivodeship = $_POST['voivodeship'];
+    $zip = $_POST['ZIPCode'];
 
 
-    $email = $_POST['email'];
-    $flag = email_check($email, $flag);
-
-    $password1 = $_POST['password'];
-    $password2 = $_POST['password-repeat'];
-
-    $flag = passwords_check($password1, $flag, $password2);
-
-    $password_hash = password_hash($password1, PASSWORD_DEFAULT);
-
-    require_once "connect.php";
     mysqli_report(MYSQLI_REPORT_STRICT);
-
     try {
-        $connection = new mysqli($host, $db_user, $db_password, $db_name);
-        if ($connection->connect_errno != 0) {
-            throw new Exception(mysqli_connect_errno());
-        } else {
+        if ($flag){
+//            check for profilID
+            $employerIDquery = "SELECT * FROM profil where EmailAddress =?";
+            $stmt = $conn->prepare($employerIDquery);
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if(!$result){
+                $_SESSION['error'] = '<span class="message-error">This email does not exist in database</span>';
+                header('Location: jobform.php');
 
-            $result = $connection->query("SELECT ProfilID FROM profil WHERE EmailAddress='$email'");
-
-            if (!$result) {
-                throw new Exception($connection->error);
             }
-            $email_counter = $result->num_rows;
-            if ($email_counter > 0) {
-                $flag = false;
-                $_SESSION['e_email'] = "User with this email already exists";
-            }
+            $row = $result->fetch_assoc();
+            $employerID = $row['ProfilID'];
+//            check for location
 
-            if ($flag) {
-                if ($connection->query("INSERT INTO profil VALUES (NULL, '$name', '$surname', DEFAULT, DEFAULT, DEFAULT, '$password_hash', '$email',DEFAULT,'$birthday_date','$sex')")) {
-                    header('Location: login_page.php');
-                } else {
-                    throw new Exception($connection->error);
+            $find_location_query = "SELECT * FROM location WHERE `Country` LIKE ? AND `Voivodeship` LIKE ? AND `City` LIKE ? AND `ZIPCode` LIKE ? AND `Street` LIKE ?";
+            $stmt = $conn->prepare($find_location_query);
+            $stmt->bind_param("sssss", $country,$voivodeship,$city,$zip,$street);
+            $stmt->execute();
+            $result_of_finding_location = $stmt->get_result();
+            if ($result_of_finding_location != null){
+                $row = $result_of_finding_location->fetch_assoc();
+                $locationID = $row['LocationID'];
+
+                $insert_job_offer_query ="INSERT INTO joboffer (`JobID`, `EmployerID`, `Requirements`, `Position`, `Earnings`, `Benefits`, `TypeOfContract`, `WorkingTime`, `CreationDate`, `OfficeLocationID`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, current_timestamp(), ?)";
+                $stmt = $conn->prepare($insert_job_offer_query);
+                $stmt->bind_param("ssssssss", $employerID,$requirements, $position, $earnings, $benefits, $type_of_contract, $working_time, $locationID);
+                if($stmt->execute()){
+                    header('Location: index.php');
+                }else {
+                    throw new Exception($conn->error);
+                }
+            }else{
+                $insert_location_query = "INSERT INTO location (`LocationID`, `Country`, `Voivodeship`, `City`, `ZIPCode`, `Street`) VALUES (NULL, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($insert_location_query);
+                $stmt->bind_param("sssss", $country, $voivodeship, $city, $zip, $street);
+                $stmt->execute();
+
+                $find_location_query = "SELECT *  FROM location WHERE `Country` LIKE ? AND `Voivodeship` LIKE ? AND `City` LIKE ? AND `ZIPCode` LIKE ? AND `Street` LIKE ?";
+                $stmt = $conn->prepare($find_location_query);
+                $stmt->bind_param("sssss", $country,$voivodeship,$city,$zip,$street);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                $locationID = $row['LocationID'];
+
+
+                $insert_job_offer_query ="INSERT INTO joboffer (`JobID`, `EmployerID`, `Requirements`, `Position`, `Earnings`, `Benefits`, `TypeOfContract`, `WorkingTime`, `CreationDate`, `OfficeLocationID`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, current_timestamp(), ?)";
+                $stmt = $conn->prepare($insert_job_offer_query);
+                $stmt->bind_param("ssssssss", $employerID,$requirements, $position, $earnings, $benefits, $type_of_contract, $working_time, $locationID);
+                if($stmt->execute()){
+                    header('Location: index.php');
+                }else {
+                    throw new Exception($conn->error);
                 }
             }
 
-            $connection->close();
         }
-    } catch (Exception $exception) {
+    }catch (Exception $exception) {
         echo "Server error";
         echo $exception;
     }
@@ -131,19 +177,32 @@ if (isset($_POST['email'])) {
 <html>
 <head>
     <title>Page Title</title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="main_page.css"/>
     <link rel="stylesheet" href="styles.css"/>
     <meta charset="UTF-8"/>
     <meta name="author" content="235967"/>
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+
 </head>
 
 
 <body>
-<form method="post">
+
+<form method="post" class="container-3">
     <div class="container">
         <h1>Job offer form</h1>
         <p>Please fill in this to create job offer</p>
         <hr/>
+
+        <label for="contact"><b>Contact email</b></label>
+        <input
+                type="text"
+                placeholder="Enter email contact"
+                name="contact"
+                id="contact"
+                required
+        />
 
 
         <label for="position"><b>Position</b></label>
@@ -156,10 +215,10 @@ if (isset($_POST['email'])) {
         />
         <label for="earnings"><b>Choose earnings: </b></label>
         <select name="earnings" id="earnings">
-            <option value="low">3400 - 6000</option>
-            <option value="medium">6000 - 12500</option>
-            <option value="high">12500 - 20000</option>
-            <option value="very-high">20000+</option>
+            <option value="3400 - 6000 PLN">3400 - 6000 PLN</option>
+            <option value="6000 - 12500 PLN">6000 - 12500 PLN</option>
+            <option value="12500 - 20000 PLN">12500 - 20000 PLN</option>
+            <option value="20000+ PLN">20000+ PLN</option>
         </select>
 
         <label for="benefits"><b>Benefits</b></label>
@@ -170,25 +229,42 @@ if (isset($_POST['email'])) {
                 id="benefits"
         />
 
+        <label for="requirements"><b>Requirements</b></label>
+        <input
+                type="text"
+                placeholder="Enter requirements"
+                name="requirements"
+                id="requirements"
+        />
+
         <label for="working-time"><b>Choose working time: </b></label>
         <select name="working-time" id="working-time">
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
         </select>
+
 
         <label for="type-of-contract"><b>Choose type of contract: </b></label>
         <select name="type-of-contract" id="type-of-contract">
-            <option value="contract-of-employment">Contract of employment</option>
-            <option value="contract-work">Contract work</option>
-            <option value="mandate-contract">Mandate contract</option>
-            <option value="b2b-contract">B2B contract</option>
-            <option value="internship/practice">Internship/Practice</option>
+            <option value="Contract of employment">Contract of employment</option>
+            <option value="Contract work">Contract work</option>
+            <option value="Mandate contract">Mandate contract</option>
+            <option value="B2B contract">B2B contract</option>
+            <option value="Internship/Practice">Internship/Practice</option>
         </select>
+
 
 
         <p>Office address</p>
         <hr/>
 
+        <label for="country"><b>Country</b></label>
+        <input
+                type="text"
+                placeholder="Enter street name"
+                name="country"
+                id="country"
+        />
 
         <label for="street"><b>Street</b></label>
         <input
@@ -219,9 +295,16 @@ if (isset($_POST['email'])) {
                 id="ZIPCode"
         />
 
-        <button type="submit" class="registerbtn">Submit</button>
-    </div>
+        <?php
+        if(isset($_SESSION['error'])){
+            echo $_SESSION['error'];
 
+        }
+        ?>
+        <button type="submit" class="registerbtn">Submit</button>
+        <a href="index.php" class="button--color-red">Cancel</a>
+
+    </div>
 </form>
 </body>
 </html>
