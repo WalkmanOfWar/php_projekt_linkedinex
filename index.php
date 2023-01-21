@@ -78,8 +78,8 @@ $_SESSION['error'] = '';
                 <div id="tab-1" class="tab-pane fade show p-0 active">
                     <?php
                     if (isset($_POST['submit-search'])) {
-                        $search = mysqli_real_escape_string($conn,$_POST['search']);
-                        $sql = "SELECT joboffer.Position, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
+                        $search = mysqli_real_escape_string($conn, $_POST['search']);
+                        $sql = "SELECT joboffer.JobID, joboffer.Position, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
                                                     FROM joboffer, location
                                                     WHERE joboffer.OfficeLocationID = location.LocationID 
                                                         AND joboffer.Position LIKE '%$search%'
@@ -87,7 +87,7 @@ $_SESSION['error'] = '';
                                                         OR location.Country LIKE '%$search%'
                                                         ";
                     } else {
-                        $sql = "SELECT joboffer.Position, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
+                        $sql = "SELECT joboffer.JobID, joboffer.Position, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
                                                     FROM joboffer, location
                                                     WHERE joboffer.OfficeLocationID = location.LocationID";
                     }
@@ -95,7 +95,13 @@ $_SESSION['error'] = '';
                     $queryResults = mysqli_num_rows($result);
                     if ($queryResults > 0) {
                         while ($row = mysqli_fetch_array($result)) {
+
+                            if(!isset($row['JobID'])){
+                                echo "nie mo";
+                            }
+
                             echo '
+                            <form method="post" action="handle_user.php">
                             <div class="job-item p-4 mb-4">
                                 <div class="row g-4">
                                          <div class="col-sm-12 col-md-8 d-flex align-items-center">
@@ -109,17 +115,36 @@ $_SESSION['error'] = '';
                                                     </div>
                                                 </div>
                                          </div>
-                                      <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
-                                <div class="d-flex mb-3">
-                                    <a class="btn btn-light btn-square me-3" href=""><i class="far fa-heart text--green"></i></a>
-                                    <a class="button-standard button-primary" href="">Apply Now</a>
-                                </div>
-                                <div class="job-discription-date">
-                                    <small class="job-discription-item"><i class="far fa-calendar-alt text--green me-2"></i>Date Line: ' . $row['CreationDate'] . '</small>
+                                     <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
+                                        <div class="d-flex mb-3">';
+                                            $is_liked = "SELECT *
+                                                    FROM joboffer, likes
+                                                    WHERE likes.UserID = ? AND likes.JobOfferID = ?";
+                                            $stmt = $conn->prepare($is_liked);
+                                            $stmt->bind_param("ii", $_SESSION['Id'] , $row['JobID']);
+                                            $stmt->execute();
+                                            $result_of_finding_liked_post = $stmt->get_result();
+                                            $row = $result_of_finding_liked_post->fetch_assoc();
+                                            if ($row['IsLiked'] == 0){
+                                                $favi = "fa-heart";
+                                            }else{
+                                                $favi = "fa fa-heart";
+                                            }
+                                            echo '
+                                                <button type="submit" name=switch_like value="'.$row['JobID'].'" class="btn btn-light btn-square me-3" href="like_php_job.php"><i class="far '.$favi.' text--green"></i></button>';
+                                            if (isset($_SESSION['rank']) && $_SESSION['rank'] =='Admin'){
+                                                echo '<button type=submit name=delete_job value="'.$row['JobID'].'" class="button-standard button--color-red">Delete</button>';
+                                            }
+                                         echo '
+                                            <button type=submit name=job_id value="'.$row['JobID'].'" class="button-standard button-primary">Apply Now</button>
+                                        </div>
+                                        <div class="job-discription-date">
+                                            <small class="job-discription-item"><i class="far fa-calendar-alt text--green me-2"></i>Date Line: ' . $row['CreationDate'] . '</small>
+                                        </div>
+                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        </div>
+                            </form>
                     ';
                         }
                     } else {

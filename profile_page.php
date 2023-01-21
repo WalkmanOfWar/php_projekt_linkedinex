@@ -1,7 +1,7 @@
 <?php
 session_start();
 //TODO: dokleić tego ifa tam gdzie użytkownik musi być zalogowany
-if (!isset($_SESSION['Logged']) || !isset($_SESSION['email'])) {
+if (!isset($_SESSION['Logged'])) {
     header('Location: login_page.php');
     exit();
 }
@@ -52,8 +52,16 @@ if (!isset($_SESSION['Logged']) || !isset($_SESSION['email'])) {
 </navbar>
 <?php
 include 'connect.php';
+if (isset($_SESSION['employer_email'])){
+    $email = $_SESSION['employer_email'];
+    unset($_SESSION['employer_email']);
+}else{
+    $email = $_SESSION['email'];
+}
 
-$email = "235967@edu.p.lodz.pl";
+
+
+
 
 $employerIDquery = "SELECT * FROM profil where EmailAddress =?";
 $stmt = $conn->prepare($employerIDquery);
@@ -62,11 +70,13 @@ $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 
+$profileID = $row['ProfilID'];
 $name = $row['Name'];
 $surname = $row['Surname'];
 $info = $row['InformationsAboutYou'];
 $adressID = $row['AddressID'];
 $sex = $row['Sex'];
+$reactions_number = $row['ReactionsNumber'];
 
 /**
  * @param $sex
@@ -120,6 +130,7 @@ echo '
                                 <h5>Informations about me</h5>
                                 <p>'.$info.'</p>
                             </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -143,6 +154,20 @@ echo '
                                     <h6>'.$surname.'</h6>
                                 </div>
                             </div>
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="surname">Number of reactions</label>
+                                    <h6>'.$reactions_number.'</h6>
+                                </div>
+                            </div>
+                            
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label for="surname">Email address</label>
+                                    <h6>'.$email.'</h6>
+                                </div>
+                            </div>
+                            
 
                         </div>
                         <div class="row gutters">
@@ -175,12 +200,20 @@ echo '
                             </div>
                         </div>
                         <div class="row gutters">
+                            <form class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" method="post" action="handle_user.php">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <div class="text-right">
-                                    <button type="button" id="submit" name="submit" class="btn button-update">
+                                <div class="text-right">';
+                                if ($email == $_SESSION['email']){
+                                    echo '<button type="button" id="submit" name="submit" class="btn button-update">
                                         <a href="profile_page_update.php">Edit your settings</a>
-                                    </button>
+                                    </button>';
+                                }
+                                if (isset($_SESSION['rank']) && $_SESSION['rank'] =='Admin' && $email != $_SESSION['email']){
+                                    echo '<button type=submit name=delete_profile value="'.$profileID.'" class="button-standard button--color-red">Delete profile</button>';
+                                }
+                                echo '
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -188,8 +221,9 @@ echo '
             </div>
         </div>
     </div>
-</div>'
-
+    
+</div>
+';
 ?>
 
 </body>

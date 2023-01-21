@@ -150,6 +150,7 @@ element.style {
 }
 
 .button-standard{
+    cursor: pointer;
     display: inline-block;
     font-weight: 400;
     text-align: center;
@@ -244,4 +245,12 @@ button a{
 button a:hover{
     color: white;
     text-decoration: none;
+}
+
+.button--color-red{
+    background-color: rgb(190, 62, 62);
+    text-decoration: none;
+    color: white;
+    border: none;
+    cursor: pointer;
 }

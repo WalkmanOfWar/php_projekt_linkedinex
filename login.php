@@ -25,6 +25,7 @@ try {
                 if (password_verify($password,$row['Password'])){
                     $_SESSION['email'] = $row['EmailAddress'];
                     $_SESSION['Logged'] = true;
+                    $_SESSION['rank'] = $row['Rank'];
                     $_SESSION['Id'] = $row['ProfilID'];
                     $result->free_result();
                     unset($_SESSION['Error']);
@@ -64,6 +65,7 @@ if ($connection->connect_errno!=0){
             $row =  $result->fetch_assoc();
             if (password_verify($password,$row['Password'])){
                 $_SESSION['Name'] = $row['Name'];
+                $_SESSION['rank'] = $row['Rank'];
                 $_SESSION['Logged'] = true;
                 $_SESSION['email'] = $row['EmailAddress'];
                 $_SESSION['Id'] = $row['ProfilID'];

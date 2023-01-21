@@ -2,94 +2,28 @@
 session_start();
 include 'connect.php';
 
-/**
- * @param $password1
- * @param bool $flag
- * @param $password2
- * @return bool
- */
-function passwords_check($password1, bool $flag, $password2): bool
-{
-    if (strlen($password1) < 8 || strlen($password1) > 20) {
-        $flag = false;
-        $_SESSION['e_password'] = "Field password must only contain from  to 20 characters";
-    }
 
-    if ($password1 != $password2) {
-        $flag = false;
-        $_SESSION['e_password'] = "Passwords doesn't match";
-    }
-    return $flag;
-}
-
-/**
- * @param $name
- * @param bool $flag
- * @param $surname
- * @return bool
- */
-function name_surname_check($name, bool $flag, $surname): bool
-{
-    if ((strlen($name) < 3 || strlen($name) > 20)) {
-        $flag = false;
-        $_SESSION['e_name'] = "Field name must only contain from 3 to 20 characters";
-    }
-
-    if (!preg_match("/^[\s\p{L}]+$/u", $name)) {
-        $flag = false;
-        $_SESSION['e_name'] = "Field name must only contain alphanumerical characters";
-    }
-
-    if ((strlen($surname) < 3 || strlen($surname) > 20)) {
-        $flag = false;
-        $_SESSION['e_surname'] = "Field name must only contain from 3 to 20 characters";
-    }
-
-    if (!preg_match("/^[\s\p{L}]+$/u", $surname)) {
-        $flag = false;
-        $_SESSION['e_surname'] = "Field name must only contain alphanumerical characters";
-    }
-    return $flag;
-}
-
-/**
- * @param $email
- * @param bool $flag
- * @return bool
- */
-function email_check($email, bool $flag): bool
-{
-    $safe_email = filter_var($email, FILTER_SANITIZE_EMAIL);
-    if (!filter_var($safe_email, FILTER_VALIDATE_EMAIL) || ($email != $safe_email)) {
-        $flag = false;
-        $_SESSION['e_email'] = "Something wrong with email";
-    }
-    return $flag;
-}
-
-    $email = '';
+$email = '';
 //    $flag = email_check($email, $flag);
 
-    $position = '';
-    $earnings = '';
-    $benefits = '';
-    $working_time = '';
-    $type_of_contract = '';
-    $requirements = '';
+$position = '';
+$earnings = '';
+$benefits = '';
+$working_time = '';
+$type_of_contract = '';
+$requirements = '';
 
-    $country = '';
-    $street = '';
-    $city = '';
-    $voivodeship = '';
-    $zip = '';
-
+$country = '';
+$street = '';
+$city = '';
+$voivodeship = '';
+$zip = '';
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $flag = true;
 
-    $email = $_POST['contact'];
-//    $flag = email_check($email, $flag);
+    $email = $_SESSION['email'];
 
     $position = $_POST['position'];
     $earnings = $_POST['earnings'];
@@ -107,14 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     mysqli_report(MYSQLI_REPORT_STRICT);
     try {
-        if ($flag){
+        if ($flag) {
 //            check for profilID
             $employerIDquery = "SELECT * FROM profil where EmailAddress =?";
             $stmt = $conn->prepare($employerIDquery);
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
-            if(!$result){
+            if (!$result) {
                 $_SESSION['error'] = '<span class="message-error">This email does not exist in database</span>';
                 header('Location: jobform.php');
 
@@ -123,24 +57,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $employerID = $row['ProfilID'];
 //            check for location
 
-            $find_location_query = "SELECT * FROM location WHERE `Country` LIKE ? AND `Voivodeship` LIKE ? AND `City` LIKE ? AND `ZIPCode` LIKE ? AND `Street` LIKE ?";
+            $find_location_query = "SELECT * FROM location WHERE `Country` = ? AND `Voivodeship` = ? AND `City` = ? AND `ZIPCode` = ? AND `Street` = ?";
             $stmt = $conn->prepare($find_location_query);
-            $stmt->bind_param("sssss", $country,$voivodeship,$city,$zip,$street);
+            $stmt->bind_param("sssss", $country, $voivodeship, $city, $zip, $street);
             $stmt->execute();
             $result_of_finding_location = $stmt->get_result();
-            if ($result_of_finding_location != null){
+            if (!$result_of_finding_location) {
                 $row = $result_of_finding_location->fetch_assoc();
                 $locationID = $row['LocationID'];
 
-                $insert_job_offer_query ="INSERT INTO joboffer (`JobID`, `EmployerID`, `Requirements`, `Position`, `Earnings`, `Benefits`, `TypeOfContract`, `WorkingTime`, `CreationDate`, `OfficeLocationID`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, current_timestamp(), ?)";
+                $insert_job_offer_query = "INSERT INTO joboffer (`JobID`, `EmployerID`, `Requirements`, `Position`, `Earnings`, `Benefits`, `TypeOfContract`, `WorkingTime`, `CreationDate`, `OfficeLocationID`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, current_timestamp(), ?)";
                 $stmt = $conn->prepare($insert_job_offer_query);
-                $stmt->bind_param("ssssssss", $employerID,$requirements, $position, $earnings, $benefits, $type_of_contract, $working_time, $locationID);
-                if($stmt->execute()){
-                    header('Location: index.php');
-                }else {
+                $stmt->bind_param("ssssssss", $employerID, $requirements, $position, $earnings, $benefits, $type_of_contract, $working_time, $locationID);
+                if ($stmt->execute()) {
+                } else {
                     throw new Exception($conn->error);
                 }
-            }else{
+            } else {
                 $insert_location_query = "INSERT INTO location (`LocationID`, `Country`, `Voivodeship`, `City`, `ZIPCode`, `Street`) VALUES (NULL, ?, ?, ?, ?, ?)";
                 $stmt = $conn->prepare($insert_location_query);
                 $stmt->bind_param("sssss", $country, $voivodeship, $city, $zip, $street);
@@ -148,25 +81,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $find_location_query = "SELECT *  FROM location WHERE `Country` LIKE ? AND `Voivodeship` LIKE ? AND `City` LIKE ? AND `ZIPCode` LIKE ? AND `Street` LIKE ?";
                 $stmt = $conn->prepare($find_location_query);
-                $stmt->bind_param("sssss", $country,$voivodeship,$city,$zip,$street);
+                $stmt->bind_param("sssss", $country, $voivodeship, $city, $zip, $street);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 $row = $result->fetch_assoc();
                 $locationID = $row['LocationID'];
 
 
-                $insert_job_offer_query ="INSERT INTO joboffer (`JobID`, `EmployerID`, `Requirements`, `Position`, `Earnings`, `Benefits`, `TypeOfContract`, `WorkingTime`, `CreationDate`, `OfficeLocationID`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, current_timestamp(), ?)";
+                $insert_job_offer_query = "INSERT INTO joboffer (`JobID`, `EmployerID`, `Requirements`, `Position`, `Earnings`, `Benefits`, `TypeOfContract`, `WorkingTime`, `CreationDate`, `OfficeLocationID`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, current_timestamp(), ?)";
                 $stmt = $conn->prepare($insert_job_offer_query);
-                $stmt->bind_param("ssssssss", $employerID,$requirements, $position, $earnings, $benefits, $type_of_contract, $working_time, $locationID);
-                if($stmt->execute()){
-                    header('Location: index.php');
-                }else {
+                $stmt->bind_param("ssssssss", $employerID, $requirements, $position, $earnings, $benefits, $type_of_contract, $working_time, $locationID);
+                if ($stmt->execute()) {
+
+                } else {
                     throw new Exception($conn->error);
                 }
             }
 
+            $get_latest_job_offer = "SELECT * FROM joboffer where `EmployerID` like ? and `Requirements` like ? and `Position` like ? and `Earnings` like ? and `Benefits` like ? and `TypeOfContract` like ? and `WorkingTime` like ? and `OfficeLocationID` like ?" ;
+            $stmt1 = $conn->prepare($get_latest_job_offer);
+            $stmt1->bind_param("ssssssss", $employerID, $requirements, $position, $earnings, $benefits, $type_of_contract, $working_time, $locationID);
+            $stmt1->execute();
+            $result = $stmt1->get_result();
+            $row = $result->fetch_assoc();
+
+            $id_of_job = $row['JobID'];
+            $get_all_users = "SELECT * FROM profil";
+            $result = $conn->query($get_all_users);
+            if ($result->num_rows>0){
+                while ($row = $result->fetch_assoc()){
+                    $insert_user_to_like_table = "INSERT INTO likes (`UserID`, `JobOfferID`, `OwnerID`, `IsLiked`) VALUES (?, ?,?, DEFAULT)";
+                    $stmt = $conn->prepare($insert_user_to_like_table);
+                    $stmt->bind_param("iii", $row['ProfilID'] , $id_of_job,$employerID);
+                    $stmt->execute();
+                }
+            }
+            header('Location: index.php');
+
+
         }
-    }catch (Exception $exception) {
+    } catch (Exception $exception) {
         echo "Server error";
         echo $exception;
     }
@@ -195,14 +149,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>Please fill in this to create job offer</p>
         <hr/>
 
-        <label for="contact"><b>Contact email</b></label>
-        <input
-                type="text"
-                placeholder="Enter email contact"
-                name="contact"
-                id="contact"
-                required
-        />
 
 
         <label for="position"><b>Position</b></label>
@@ -254,7 +200,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </select>
 
 
-
         <p>Office address</p>
         <hr/>
 
@@ -296,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         />
 
         <?php
-        if(isset($_SESSION['error'])){
+        if (isset($_SESSION['error'])) {
             echo $_SESSION['error'];
 
         }
