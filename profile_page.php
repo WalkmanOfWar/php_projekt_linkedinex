@@ -52,15 +52,30 @@ if (!isset($_SESSION['Logged'])) {
 </navbar>
 <?php
 include 'connect.php';
+
+
 if (isset($_SESSION['employer_email'])){
     $email = $_SESSION['employer_email'];
     unset($_SESSION['employer_email']);
 }else{
     $email = $_SESSION['email'];
 }
+/**
+ * @param $sex
+ * @return string
+ */
 
-
-
+function selectPicture($sex): string
+{
+    if ($sex == "Man") {
+        $src = "https://bootdey.com/img/Content/avatar/avatar7.png";
+    } else if ($sex == "Woman") {
+        $src = "https://bootdey.com/img/Content/avatar/avatar8.png";
+    } else {
+        $src = "https://bootdey.com/img/Content/avatar/avatar2.png";
+    }
+    return $src;
+}
 
 
 $employerIDquery = "SELECT * FROM profil where EmailAddress =?";
@@ -78,23 +93,10 @@ $adressID = $row['AddressID'];
 $sex = $row['Sex'];
 $reactions_number = $row['ReactionsNumber'];
 
-/**
- * @param $sex
- * @return string
- */
-function selectPicture($sex): string
-{
-    if ($sex == "Man") {
-        $src = "https://bootdey.com/img/Content/avatar/avatar7.png";
-    } else if ($sex == "Woman") {
-        $src = "https://bootdey.com/img/Content/avatar/avatar8.png";
-    } else {
-        $src = "https://bootdey.com/img/Content/avatar/avatar2.png";
-    }
-    return $src;
+$src = $row['ImagePath'];
+if ($src == null){
+    $src = selectPicture($sex);
 }
-
-$src = selectPicture($sex);
 
 
 $find_location_query = "SELECT * FROM location WHERE `LocationID` LIKE ?";
@@ -103,13 +105,22 @@ $stmt->bind_param("s", $adressID);
 $stmt->execute();
 $result_of_finding_location = $stmt->get_result();
 $row = $result_of_finding_location->fetch_assoc();
+if (!$row){
+    $street = 'empty';
+    $voivodeship = 'empty';
+    $city = 'empty';
+    $zip ='empty';
+    $country = 'empty';
+}else{
+    $_SESSION['adressID'] = $adressID;
+    $street = $row['Street'];
+    $voivodeship = $row['Voivodeship'];
+    $city = $row['City'];
+    $zip =$row['ZIPCode'];
+    $country = $row['Country'];
+}
 
-$_SESSION['adressID'] = $adressID;
-$street = $row['Street'];
-$voivodeship = $row['Voivodeship'];
-$city = $row['City'];
-$zip =$row['ZIPCode'];
-$country = $row['Country'];
+
 echo '
 
 <div class="profile-body">
@@ -121,7 +132,7 @@ echo '
                         <div class="account-settings">
                             <div class="user-profile">
                                 <div class="user-avatar">
-                                    <img src='.$src.'>
+                                    <img src="images/'.$src.'">
                                 </div>
                                 <h5 class="user-name">'.$name.' '.$surname.'</h5>
                                 <h6 class="user-email">'.$email.'</h6>

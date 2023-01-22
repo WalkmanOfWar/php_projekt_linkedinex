@@ -6,21 +6,7 @@ if (!isset($_SESSION['Logged'])) {
 }
 include "connect.php";
 
-/**
- * @param $sex
- * @return string
- */
-function selectPicture($sex): string
-{
-    if ($sex == "Man") {
-        $src = "https://bootdey.com/img/Content/avatar/avatar7.png";
-    } else if ($sex == "Woman") {
-        $src = "https://bootdey.com/img/Content/avatar/avatar8.png";
-    } else {
-        $src = "https://bootdey.com/img/Content/avatar/avatar2.png";
-    }
-    return $src;
-}
+
 
 $name = '';
 $surname = '';
@@ -45,7 +31,11 @@ $namePrev = $row['Name'];
 $surnamePrev = $row['Surname'];
 $infoPrev = $row['InformationsAboutYou'];
 $sex = $row['Sex'];
-$src = selectPicture($sex);
+$src = $row['ImagePath'];
+if ($src == null){
+    $src = selectPicture($sex);
+}
+
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -60,13 +50,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $city = $_POST['city'];
     $voivodeship = $_POST['voivodeship'];
     $zip = $_POST['ZIPCode'];
-    $locationID = $_SESSION['adressID'];
+    $country = $_POST['country'];
+
+    if ($_FILES['image'] != null){
+        $path = 'images/' . $_FILES["image"]["name"];
+        move_uploaded_file($_FILES["image"]["tmp_name"], $path);
+        $src = $_FILES['image']['name'];
+    }
 
 
 
     $sql = "SELECT `ProfilID` FROM `profil` WHERE `EmailAddress` LIKE ?";
     $stmt = $conn->prepare($sql);
-    if ($stmt == false){
+    if (!$stmt){
         trigger_error($conn->error, E_USER_ERROR);
     }
     $stmt->bind_param("s", $_SESSION['email']);
@@ -77,33 +73,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-    $find_location_query = "SELECT * FROM location WHERE  `Voivodeship` LIKE ? AND `City` LIKE ? AND `ZIPCode` LIKE ? AND `Street` LIKE ?";
+    $find_location_query = "SELECT * FROM location WHERE `Country` = ? AND `Voivodeship` = ?  AND `City` = ? AND `ZIPCode` = ? AND `Street` = ?";
     $stmt = $conn->prepare($find_location_query);
-    $stmt->bind_param("ssss", $voivodeship,$city,$zip,$street);
+    $stmt->bind_param("sssss", $country,$voivodeship,$city,$zip,$street);
     $stmt->execute();
     $result_of_finding_location = $stmt->get_result();
-    if ($result_of_finding_location == null) {
+    $row = $result_of_finding_location->fetch_assoc();
 
-        $insert_location_query = "INSERT INTO location (`LocationID`, `Voivodeship`, `City`, `ZIPCode`, `Street`) VALUES (NULL, ?, ?, ?, ?)";
+    if (!$row) {
+        $insert_location_query = "INSERT INTO location (`LocationID`, `Voivodeship`, `City`, `ZIPCode`, `Street`, `Country`) VALUES (NULL, ?, ?, ?, ?,?)";
         $stmt = $conn->prepare($insert_location_query);
-        $stmt->bind_param("sssss", $voivodeship, $city, $zip, $street);
+        $stmt->bind_param("sssss", $voivodeship, $city, $zip, $street, $country);
         $stmt->execute();
-
         $find_location_query = "SELECT *  FROM location WHERE `Voivodeship` LIKE ? AND `City` LIKE ? AND `ZIPCode` LIKE ? AND `Street` LIKE ?";
         $stmt = $conn->prepare($find_location_query);
-        $stmt->bind_param("sssss",$voivodeship,$city,$zip,$street);
+        $stmt->bind_param("ssss",$voivodeship,$city,$zip,$street);
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         $locationID = $row['LocationID'];
     }else{
-        $row = $result_of_finding_location->fetch_assoc();
         $locationID = $row['LocationID'];
-
     }
-    $sql = "Update `profil` SET `Name` = ?, `Surname` = ?, `InformationsAboutYou` = ?, `EmailAddress` = ?, `AddressID`=? WHERE `ProfilID` = ?";
+
+    $sql = "Update `profil` SET `Name` = ?, `Surname` = ?, `InformationsAboutYou` = ?, `EmailAddress` = ? WHERE `ProfilID` = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssss", $name, $surname, $info, $email, $locationID, $profilID);
+    $stmt->bind_param("ssssss", $name, $surname, $info, $email,  $profilID);
+    $stmt->execute();
+    $sql = "Update `profil` SET `AddressID`=?,`ImagePath`=? WHERE `ProfilID` = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $locationID,$src, $profilID);
+
     if($stmt->execute()){
         $_SESSION['email'] = $email;
         header('Location: profile_page.php');
@@ -154,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </li>
     </ul>
 </navbar>
-<form method="post">
+<form enctype="multipart/form-data" method="post">
     <div class="profile-body">
         <div class="container">
             <div class="row gutters">
@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 
                                 <div class="user-profile">
                                 <div class="user-avatar">
-                                    <img src=' . $src . '>
+                                    <img src="/images/'.$src.'">
                                 </div>
                                 <h5 class="user-name">' . $namePrev . ' ' . $surnamePrev . '</h5>
                                 <h6 class="user-email">' . $_SESSION['email'] . '</h6>
@@ -220,6 +220,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                 </div>
 
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="image">Select new profile picture</label>
+                                        <input class="form-control" type="file" name="image" placeholder="image"/>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <div class="form-group">
+                                        <label for="information">Country</label>
+                                        <input type="text" name="country" class="form-control" id="information"
+                                               placeholder="Enter in which country you are avaiable" required>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row gutters">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">

@@ -68,6 +68,23 @@ function email_check($email, bool $flag): bool
 //todo: zabezpieczenie przed javascriptem i innymi rzeczami
 //todo: crossscripting trim, ograniczona ilosc formularzy
 
+
+/**
+ * @param $sex
+ * @return string
+ */
+function selectPicture($sex): string
+{
+    if ($sex == "Man") {
+        $src = "avatar7.png";
+    } else if ($sex == "Woman") {
+        $src = "avatar8.png";
+    } else {
+        $src = "avatar2.png";
+    }
+    return $src;
+}
+
 if (isset($_POST['email'])) {
     $flag = true;
 
@@ -110,9 +127,19 @@ if (isset($_POST['email'])) {
             }
 
             if ($flag) {
+                $src = selectPicture($sex);
                 if ($connection->query(
-                        "INSERT INTO profil VALUES (NULL, '$name', '$surname', DEFAULT, DEFAULT, DEFAULT, '$password_hash', '$email',DEFAULT,'$birthday_date','$sex')")
+                        "INSERT INTO profil VALUES (NULL, '$name', '$surname', DEFAULT, DEFAULT, DEFAULT, '$password_hash', '$email',DEFAULT,'$birthday_date','$sex',DEFAULT,'$src')"
+                )
                 ) {
+                    $last_id = $connection->insert_id;
+                    $sql = "SELECT * FROM `joboffer`";
+                    $job_offers_query = $connection->query($sql);
+                    while ($row = $job_offers_query->fetch_assoc()){
+                        $jobID = $row['JobID'];
+                        $emplID = $row['EmployerID'];
+                        $connection->query( "INSERT INTO likes values('$last_id', '$jobID', '$emplID', 0)");
+                    }
                     header('Location: login_page.php');
                 } else {
                     throw new Exception($connection->error);

@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="country"><b>Country</b></label>
         <input
                 type="text"
-                placeholder="Enter street name"
+                placeholder="Enter country name"
                 name="country"
                 id="country"
         />

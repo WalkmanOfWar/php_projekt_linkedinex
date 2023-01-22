@@ -68,47 +68,52 @@ if(isset($_POST['button']) && isset($_FILES['resume']))
     //$sender_name = $_SESSION['Name']; //sender name
     $reply_to_email = $_SESSION['email']; //sender email, it will be used in "reply-to" header
     $subject   = $position; //subject for the email
-    $message   = "I have just applied for your job offer!"; //body of the email
+    $message   = $recipient_email." have just applied for your job offer!"; //body of the email
 
 
     $path = 'resumes/' . $_FILES["resume"]["name"];
     move_uploaded_file($_FILES["resume"]["tmp_name"], $path);
 
-    $mail = new PHPMailer;
-    $mail->IsSMTP();        //Sets Mailer to send message using SMTP
-    $mail->Host = 'smtp.poczta.onet.pl';  //Sets the SMTP hosts of your Email hosting, this for Godaddy
-    $mail->Port = '465';        //Sets the default SMTP server port
-    $mail->SMTPAuth = true;       //Sets SMTP authentication. Utilizes the Username and Password variables
-    $mail->Username = 'javatest1234@op.pl';     //Sets SMTP username
-    $mail->Password = 'Maciek.sierzputowski37';     //Sets SMTP password
-    $mail->SMTPSecure = 'ssl';       //Sets connection prefix. Options are "", "ssl" or "tls"
-    $mail->From = $from_email;     //Sets the From email address for the message
-    $mail->FromName = '';    //Sets the From name of the message
-    try {
-        $mail->AddAddress('maciek.sierzputowski37@gmail.com', 'Macko');
-    } catch (Exception $e) {
-        $error = 'address bad';
-        var_dump($e);
-    }
-    try {
-        $mail->AddAttachment($path);
-    } catch (Exception $e) {
-        $error = 'attachment failed';
-        var_dump($e);
 
-    }     //Adds an attachment from a path on the filesystem
-    $mail->Subject = 'Application for job';    //Sets the Subject of the message
-    $mail->Body = $message;       //An HTML or plain text message body
-    try {
-        if ($mail->Send())        //Send an Email. Return true on success or false on error
-        {
-            $error = '<div class="alert alert-success">Application Successfully Submitted</div>';
-            unlink($path);
-        } else {
-            $error = '<div class="alert alert-danger">There is an Error</div>';
-        }
-    } catch (Exception $e) {
-        var_dump($e);
+    $mailto = $recipient_email;
+
+    $content = file_get_contents($path);
+    $content = chunk_split(base64_encode($content));
+
+    // a random hash will be necessary to send mixed content
+    $separator = md5(time());
+
+    // carriage return type (RFC)
+    $eol = "\r\n";
+
+    // main header (multipart mandatory)
+    $headers = "From: LinkedinexJobApp <test@test.com>" . $eol;
+    $headers .= "MIME-Version: 1.0" . $eol;
+    $headers .= "Content-Type: multipart/mixed; boundary=\"" . $separator . "\"" . $eol;
+    $headers .= "Content-Transfer-Encoding: 7bit" . $eol;
+    $headers .= "This is a MIME encoded message." . $eol;
+
+    // message
+    $body = "--" . $separator . $eol;
+    $body .= "Content-Type: text/plain; charset=\"iso-8859-1\"" . $eol;
+    $body .= "Content-Transfer-Encoding: 8bit" . $eol;
+    $body .= $message . $eol;
+
+    // attachment
+    $body .= "--" . $separator . $eol;
+    $body .= "Content-Type: application/octet-stream; name=\"" . $_FILES["resume"]["name"] . "\"" . $eol;
+    $body .= "Content-Transfer-Encoding: base64" . $eol;
+    $body .= "Content-Disposition: attachment" . $eol;
+    $body .= $content . $eol;
+    $body .= "--" . $separator . "--";
+
+    //SEND Mail
+    if (mail($mailto, $subject, $body, $headers)) {
+        echo "mail send ... OK"; // or use booleans here
+        header('Location: index.php');
+    } else {
+        echo "mail send ... ERROR!";
+        print_r( error_get_last() );
     }
 }
 ?>
@@ -128,46 +133,50 @@ if(isset($_POST['button']) && isset($_FILES['resume']))
     <?php echo '
     <form enctype="multipart/form-data" method="POST" action="" style="min-width: 1000px;">
         <div class="container">
-            <h1></h1>
-             <a href="profile_page.php">Employer profile</a>
-            <label for="position"><b>Position:</b></label>
+            <br>
+            <h2>Job informations</h2>
+            <hr/>
+            <label for="position"><h3><b>Position:</b></h3></label>
             <h6>'.$position.'</h6>
 
-            <label for="earnings"><b>Earnings: </b></label>
+            <label for="earnings"><h3><b>Earnings: </b></label>
             <h6>'.$earnings.'</h6>
 
-            <label for="benefits"><b>Benefits</b></label>
+            <label for="benefits"><h3><b>Benefits</b></h3></label>
             <h6>'.$benefits.'</h6>
-            <label for="requirements"><b>Requirements</b></label>
+            <label for="requirements"><h3><b>Requirements</b></h3></label>
             <h6>'.$requirements.'</h6>
 
 
-            <label for="working-time"><b>Working time: </b></label>
+            <label for="working-time"><h3><b>Working time: </b></h3></label>
             <h6>'.$working_time.'</h6>
 
 
 
-            <label for="type-of-contract"><b>Type of contract: </b></label>
+            <label for="type-of-contract"><h3><b>Type of contract: </b></h3></label>
             <h6>'.$type_of_contract.'</h6>
 
-
-            <p>Office address</p>
+            <br><br>
+            <h2>Office address</h2>
             <hr/>
-            <label for="country"><b>Country: </b></label>
+            <label for="country"><h3><b>Country: </b></h3></label>
             <h6>'.$country.'</h6>
 
 
-            <label for="street"><b>Street: </b></label>
+            <label for="street"><h3><b>Street: </b></h3></label>
             <h6>'.$street.'</h6>
 
-            <label for="city"><b>City: </b></label>
+            <label for="city"><h3><b>City: </b></h3></label>
             <h6>'.$city.'</h6>
 
-            <label for="voivodeship"><b>State/Voivodeship: </b></label>
+            <label for="voivodeship"><h3><b>State/Voivodeship: </b></h3></label>
             <h6>'.$voivodeship.'</h6>
 
-            <label for="ZIPCode"><b>ZIP Code: </b></label>
+            <label for="ZIPCode"><h3><b>ZIP Code: </b></h3></label>
             <h6>'.$zip.'</h6>
+            
+            <label for="voivodeship"><h3><b>Attach your resume: </b></h3></label>
+
             <input class="form-control" type="file" name="resume" accept=".pdf" placeholder="Attachment" required/>
         </div>
         <div class="form-group">

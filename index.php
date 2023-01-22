@@ -79,7 +79,7 @@ $_SESSION['error'] = '';
                     <?php
                     if (isset($_POST['submit-search'])) {
                         $search = mysqli_real_escape_string($conn, $_POST['search']);
-                        $sql = "SELECT joboffer.JobID, joboffer.Position, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
+                        $sql = "SELECT joboffer.JobID, joboffer.Position, joboffer.EmployerID, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
                                                     FROM joboffer, location
                                                     WHERE joboffer.OfficeLocationID = location.LocationID 
                                                         AND joboffer.Position LIKE '%$search%'
@@ -87,7 +87,7 @@ $_SESSION['error'] = '';
                                                         OR location.Country LIKE '%$search%'
                                                         ";
                     } else {
-                        $sql = "SELECT joboffer.JobID, joboffer.Position, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
+                        $sql = "SELECT joboffer.JobID, joboffer.Position,joboffer.EmployerID, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
                                                     FROM joboffer, location
                                                     WHERE joboffer.OfficeLocationID = location.LocationID";
                     }
@@ -95,17 +95,21 @@ $_SESSION['error'] = '';
                     $queryResults = mysqli_num_rows($result);
                     if ($queryResults > 0) {
                         while ($row = mysqli_fetch_array($result)) {
+                            $profil_query = "SELECT * FROM profil WHERE ProfilID LIKE ?";
 
-                            if(!isset($row['JobID'])){
-                                echo "nie mo";
-                            }
+                            $stmt = $conn->prepare($profil_query);
+                            $stmt->bind_param("s", $row['EmployerID']);
+                            $stmt->execute();
+                            $result_of_finding_liked_post = $stmt->get_result();
+                            $row_profil = $result_of_finding_liked_post->fetch_assoc();
+
 
                             echo '
                             <form method="post" action="handle_user.php">
                             <div class="job-item p-4 mb-4">
                                 <div class="row g-4">
                                          <div class="col-sm-12 col-md-8 d-flex align-items-center">
-                                            <img class="flex-shrink-0 img-fluid border rounded" src="images/com-logo-1.jpg" alt="" style="width: 80px; height: 80px;">
+                                            <button  name= "clicked_image" class="reset-this" value= "'.$row_profil['EmailAddress'].'" type="submit"><img class="flex-shrink-0 img-fluid border rounded" src="images/'.$row_profil['ImagePath'].'" alt="" style="width: 80px; height: 80px;"></button>
                                                 <div class="text-start ps-4">
                                                     <h5 class="job-title">' . $row['Position'] . '</h5>
                                                     <div class="job-discription">
@@ -118,20 +122,20 @@ $_SESSION['error'] = '';
                                      <div class="col-sm-12 col-md-4 d-flex flex-column align-items-start align-items-md-end justify-content-center">
                                         <div class="d-flex mb-3">';
                                             $is_liked = "SELECT *
-                                                    FROM joboffer, likes
+                                                    FROM likes
                                                     WHERE likes.UserID = ? AND likes.JobOfferID = ?";
                                             $stmt = $conn->prepare($is_liked);
                                             $stmt->bind_param("ii", $_SESSION['Id'] , $row['JobID']);
                                             $stmt->execute();
                                             $result_of_finding_liked_post = $stmt->get_result();
-                                            $row = $result_of_finding_liked_post->fetch_assoc();
-                                            if ($row['IsLiked'] == 0){
+                                            $row_posts = $result_of_finding_liked_post->fetch_assoc();
+                                            if ($row_posts['IsLiked'] == 0){
                                                 $favi = "fa-heart";
                                             }else{
                                                 $favi = "fa fa-heart";
                                             }
                                             echo '
-                                                <button type="submit" name=switch_like value="'.$row['JobID'].'" class="btn btn-light btn-square me-3" href="like_php_job.php"><i class="far '.$favi.' text--green"></i></button>';
+                                                <button type="submit" name=switch_like value="'.$row['JobID'].'" class="btn btn-light btn-square me-3"><i class="far '.$favi.' text--green"></i></button>';
                                             if (isset($_SESSION['rank']) && $_SESSION['rank'] =='Admin'){
                                                 echo '<button type=submit name=delete_job value="'.$row['JobID'].'" class="button-standard button--color-red">Delete</button>';
                                             }

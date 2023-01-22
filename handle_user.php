@@ -18,3 +18,7 @@ if (isset($_POST['switch_like'])){
     $_SESSION['switch_like'] = $_POST['switch_like'];
     header('Location: like_php_job.php');
 }
+if (isset($_POST['clicked_image'])){
+    $_SESSION['employer_email'] = $_POST['clicked_image'];
+    header('Location: profile_page.php');
+}
