@@ -157,6 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 placeholder="Enter position"
                 name="position"
                 id="position"
+                maxlength="30"
                 required
         />
         <label for="earnings"><b>Choose earnings: </b></label>
@@ -173,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 placeholder="Enter benefits"
                 name="benefits"
                 id="benefits"
+                maxlength="250"
         />
 
         <label for="requirements"><b>Requirements</b></label>
@@ -181,6 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 placeholder="Enter requirements"
                 name="requirements"
                 id="requirements"
+                maxlength="250"
         />
 
         <label for="working-time"><b>Choose working time: </b></label>
@@ -209,6 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 placeholder="Enter country name"
                 name="country"
                 id="country"
+                maxlength="30"
         />
 
         <label for="street"><b>Street</b></label>
@@ -217,6 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 placeholder="Enter street name"
                 name="street"
                 id="street"
+                maxlength="30"
         />
         <label for="city"><b>City</b></label>
         <input
@@ -224,6 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 placeholder="Enter city name"
                 name="city"
                 id="city"
+                maxlength="30"
         />
         <label for="voivodeship"><b>State/Voivodeship</b></label>
         <input
@@ -231,6 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 placeholder="Enter state or voivodeship"
                 name="voivodeship"
                 id="voivodeship"
+                maxlength="30"
         />
         <label for="ZIPCode"><b>ZIP Code</b></label>
         <input
@@ -238,6 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 placeholder="Enter ZIP Code"
                 name="ZIPCode"
                 id="ZIPCode"
+                maxlength="30"
         />
 
         <?php

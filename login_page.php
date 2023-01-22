@@ -24,7 +24,8 @@
 
         <div class="container">
             <label for="uname"><b>Email</b></label>
-            <input type="text" placeholder="Enter Email" name="login" required/>
+            <input type="text" placeholder="Enter Email" maxlength="30" name="login" required/>
+
 
 
             <label for="psw"><b>Password</b></label>
@@ -32,6 +33,7 @@
                     type="password"
                     placeholder="Enter Password"
                     name="password"
+                    maxlength="30"
                     required
             />
 

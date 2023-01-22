@@ -174,8 +174,8 @@ echo '
                             
                             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                 <div class="form-group">
-                                    <label for="surname">Email address</label>
-                                    <h6>'.$email.'</h6>
+                                    <label for="surname">Country</label>
+                                    <h6>'.$country.'</h6>
                                 </div>
                             </div>
                             

@@ -64,7 +64,7 @@ $_SESSION['error'] = '';
     <div class="row__search">
         <div class="search-left">
             <form action="index.php" method="post">
-                <input class="button--search input-mainpage" name="search" type="text" placeholder="Enter keyword">
+                <input class="button--search input-mainpage" name="search" type="text" maxlength="30" placeholder="Enter keyword">
                 <button class="button--search" name="submit-search">Search</button>
             </form>
         </div>
@@ -79,15 +79,15 @@ $_SESSION['error'] = '';
                     <?php
                     if (isset($_POST['submit-search'])) {
                         $search = mysqli_real_escape_string($conn, $_POST['search']);
-                        $sql = "SELECT joboffer.JobID, joboffer.Position, joboffer.EmployerID, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
+                        $sql = "SELECT DISTINCT joboffer.JobID, joboffer.Position, joboffer.EmployerID, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
                                                     FROM joboffer, location
                                                     WHERE joboffer.OfficeLocationID = location.LocationID 
-                                                        AND joboffer.Position LIKE '%$search%'
-                                                        OR location.Voivodeship LIKE '%$search%'
-                                                        OR location.Country LIKE '%$search%'
+                                                        AND (joboffer.Position LIKE '%$search%'                                                       
+                                                        OR joboffer.Earnings LIKE '%$search%' 
+                                                        OR joboffer.WorkingTime LIKE '%$search%')
                                                         ";
                     } else {
-                        $sql = "SELECT joboffer.JobID, joboffer.Position,joboffer.EmployerID, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
+                        $sql = "SELECT DISTINCT joboffer.JobID, joboffer.Position,joboffer.EmployerID, joboffer.WorkingTime, joboffer.Earnings, joboffer.CreationDate, location.Voivodeship, location.Country
                                                     FROM joboffer, location
                                                     WHERE joboffer.OfficeLocationID = location.LocationID";
                     }
@@ -109,13 +109,13 @@ $_SESSION['error'] = '';
                             <div class="job-item p-4 mb-4">
                                 <div class="row g-4">
                                          <div class="col-sm-12 col-md-8 d-flex align-items-center">
-                                            <button  name= "clicked_image" class="reset-this" value= "'.$row_profil['EmailAddress'].'" type="submit"><img class="flex-shrink-0 img-fluid border rounded" src="images/'.$row_profil['ImagePath'].'" alt="" style="width: 80px; height: 80px;"></button>
+                                            <button  name= "clicked_image" class="reset-this" value= "'.htmlspecialchars($row_profil['EmailAddress']).'" type="submit"><img class="flex-shrink-0 img-fluid border rounded" src="images/'.htmlspecialchars($row_profil['ImagePath']).'" alt="" style="width: 80px; height: 80px;"></button>
                                                 <div class="text-start ps-4">
-                                                    <h5 class="job-title">' . $row['Position'] . '</h5>
+                                                    <h5 class="job-title">' . htmlspecialchars($row['Position']) . '</h5>
                                                     <div class="job-discription">
-                                                        <span class="job-discription-item"><i class="fa fa-map-marker-alt text--green me-2"></i>' . $row['Voivodeship'] . ', ' . $row['Country'] . '</span>
-                                                        <span class="job-discription-item"><i class="far fa-clock text--green me-2"></i>' . $row['WorkingTime'] . '</span>
-                                                        <span class="job-discription-item"><i class="far fa-money-bill-alt text--green me-2"></i>' . $row['Earnings'] . '</span>
+                                                        <span class="job-discription-item"><i class="fa fa-map-marker-alt text--green me-2"></i>' . htmlspecialchars($row['Voivodeship']) . ', ' . $row['Country'] . '</span>
+                                                        <span class="job-discription-item"><i class="far fa-clock text--green me-2"></i>' . htmlspecialchars($row['WorkingTime']) . '</span>
+                                                        <span class="job-discription-item"><i class="far fa-money-bill-alt text--green me-2"></i>' . htmlspecialchars($row['Earnings']) . '</span>
                                                     </div>
                                                 </div>
                                          </div>
@@ -135,15 +135,15 @@ $_SESSION['error'] = '';
                                                 $favi = "fa fa-heart";
                                             }
                                             echo '
-                                                <button type="submit" name=switch_like value="'.$row['JobID'].'" class="btn btn-light btn-square me-3"><i class="far '.$favi.' text--green"></i></button>';
+                                                <button type="submit" name=switch_like value="'.htmlspecialchars($row['JobID']).'" class="btn btn-light btn-square me-3"><i class="far '.$favi.' text--green"></i></button>';
                                             if (isset($_SESSION['rank']) && $_SESSION['rank'] =='Admin'){
-                                                echo '<button type=submit name=delete_job value="'.$row['JobID'].'" class="button-standard button--color-red">Delete</button>';
+                                                echo '<button type=submit name=delete_job value="'.htmlspecialchars($row['JobID']).'" class="button-standard button--color-red">Delete</button>';
                                             }
                                          echo '
-                                            <button type=submit name=job_id value="'.$row['JobID'].'" class="button-standard button-primary">Apply Now</button>
+                                            <button type=submit name=job_id value="'.htmlspecialchars($row['JobID']).'" class="button-standard button-primary">Apply Now</button>
                                         </div>
                                         <div class="job-discription-date">
-                                            <small class="job-discription-item"><i class="far fa-calendar-alt text--green me-2"></i>Date Line: ' . $row['CreationDate'] . '</small>
+                                            <small class="job-discription-item"><i class="far fa-calendar-alt text--green me-2"></i>Date Line: ' . htmlspecialchars($row['CreationDate']) . '</small>
                                         </div>
                                      </div>
                                 </div>

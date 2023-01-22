@@ -32,9 +32,7 @@ $surnamePrev = $row['Surname'];
 $infoPrev = $row['InformationsAboutYou'];
 $sex = $row['Sex'];
 $src = $row['ImagePath'];
-if ($src == null){
-    $src = selectPicture($sex);
-}
+
 
 
 
@@ -43,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $name = $_POST['name'];
     $surname = $_POST['surname'];
-    $info = $_POST['information'];
+    $info = $_POST['informations'];
 
 
     $street = $_POST['street'];
@@ -96,13 +94,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $locationID = $row['LocationID'];
     }
 
-    $sql = "Update `profil` SET `Name` = ?, `Surname` = ?, `InformationsAboutYou` = ?, `EmailAddress` = ? WHERE `ProfilID` = ?";
+    $sql = "Update `profil` SET `Name` = ?, `Surname` = ?, `EmailAddress` = ? WHERE `ProfilID` = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssss", $name, $surname, $info, $email,  $profilID);
+    $stmt->bind_param("ssss", $name, $surname, $email,  $profilID);
     $stmt->execute();
-    $sql = "Update `profil` SET `AddressID`=?,`ImagePath`=? WHERE `ProfilID` = ?";
+    $sql = "Update `profil` SET `InformationsAboutYou` = ?,`AddressID`=?,`ImagePath`=? WHERE `ProfilID` = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $locationID,$src, $profilID);
+    $stmt->bind_param("ssss", $info,$locationID,$src, $profilID);
 
     if($stmt->execute()){
         $_SESSION['email'] = $email;
@@ -193,7 +191,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="form-group">
                                         <label for="name">Name</label>
                                         <input type="text" name="name" class="form-control" id="name" placeholder="Enter name"
-                                               required>
+                                               required
+                                                >
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
@@ -214,8 +213,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <label for="information">Informations about you</label>
-                                        <input type="text" name="information" class="form-control" id="information"
+                                        <label for="informations">Informations about you</label>
+                                        <input type="text" name="informations" class="form-control" id="informations"
                                                placeholder="Tell us something about you" required>
                                     </div>
                                 </div>
@@ -228,8 +227,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <label for="information">Country</label>
-                                        <input type="text" name="country" class="form-control" id="information"
+                                        <label for="country">Country</label>
+                                        <input type="text" name="country" class="form-control" id="country"
                                                placeholder="Enter in which country you are avaiable" required>
                                     </div>
                                 </div>

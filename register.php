@@ -179,6 +179,7 @@ if (isset($_POST['email'])) {
                 placeholder="Enter Name"
                 name="name"
                 id="name"
+                maxlength="15"
                 required
         />
         <?php
@@ -194,6 +195,7 @@ if (isset($_POST['email'])) {
                 placeholder="Enter Surname"
                 name="surname"
                 id="surname"
+                maxlength="30"
                 required
         />
         <?php
@@ -209,6 +211,7 @@ if (isset($_POST['email'])) {
                 placeholder="Enter Email"
                 name="email"
                 id="email"
+                maxlength="20"
                 required
         />
         <?php
@@ -224,6 +227,7 @@ if (isset($_POST['email'])) {
                 placeholder="Enter Password"
                 name="password"
                 id="password"
+                maxlength="35"
                 required
         />
         <?php
@@ -239,6 +243,7 @@ if (isset($_POST['email'])) {
                 placeholder="Repeat Password"
                 name="password-repeat"
                 id="password-repeat"
+                maxlength="35"
                 required
         />
         <label for="gender"><b>Choose gender:</b></label>
@@ -249,7 +254,7 @@ if (isset($_POST['email'])) {
         </select>
         <label for="birthday"><b>Birthday:</b></label>
         <br/>
-        <input type="date" id="birthday" name="birthday"/>
+        <input type="date" max="2023-01-01" id="birthday" name="birthday"/>
         <hr/>
 
         <button type="submit" class="registerbtn">Register</button>
