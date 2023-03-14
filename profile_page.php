@@ -43,7 +43,10 @@ if (!isset($_SESSION['Logged'])) {
             <a href="index.php">Search</a>
         </li>
         <li class="nav-item">
-            <a href="#">Profile</a>
+            <a href="jobform.php">Create a job offer</a>
+        </li>
+        <li class="nav-item">
+            <a href="profile_page.php">Profile</a>
         </li>
         <li class="nav-item">
             <a href="logout.php">Logout</a>

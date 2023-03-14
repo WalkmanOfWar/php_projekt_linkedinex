@@ -143,7 +143,7 @@ $_SESSION['error'] = '';
                                             <button type=submit name=job_id value="'.htmlspecialchars($row['JobID']).'" class="button-standard button-primary">Apply Now</button>
                                         </div>
                                         <div class="job-discription-date">
-                                            <small class="job-discription-item"><i class="far fa-calendar-alt text--green me-2"></i>Date Line: ' . htmlspecialchars($row['CreationDate']) . '</small>
+                                            <small class="job-discription-item"><i class="far fa-calendar-alt text--green me-2"></i>Post date: ' . htmlspecialchars($row['CreationDate']) . '</small>
                                         </div>
                                      </div>
                                 </div>

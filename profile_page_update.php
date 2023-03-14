@@ -34,11 +34,16 @@ $sex = $row['Sex'];
 $src = $row['ImagePath'];
 
 
-
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $email = $_POST['email'];
+    $email_query = "SELECT * FROM `profil` WHERE `EmailAddress` LIKE ?";
+    $stmt = $conn->prepare($email_query);
+    $stmt->bind_param("s", $_SESSION['email']);
+    $stmt->execute();
+    $result_of_finding_email = $stmt->get_result();
+    $row = $result_of_finding_email->fetch_assoc();
+
     $name = $_POST['name'];
     $surname = $_POST['surname'];
     $info = $_POST['informations'];
@@ -145,7 +150,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="index.php">Search</a>
         </li>
         <li class="nav-item">
-            <a href="#">Profile</a>
+            <a href="jobform.php">Create a job offer</a>
+        </li>
+        <li class="nav-item">
+            <a href="profile_page.php">Profile</a>
         </li>
         <li class="nav-item">
             <a href="logout.php">Logout</a>
@@ -210,6 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <input type="email" name="email" class="form-control" id="email"
                                                placeholder="Enter email address" required>
                                     </div>
+
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                                     <div class="form-group">
